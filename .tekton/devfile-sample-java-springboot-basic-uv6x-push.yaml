@@ -26,6 +26,14 @@ spec:
     value: .
   - name: revision
     value: '{{revision}}'
+  - name: crda-scan-image
+    value: quay.io/lrangine/crda-maven:3.0
+  - name: manifest-file-path
+    value: pom.xml
+  - name: output-file-path
+    value: redhat-codeready-dependency-analysis-report.json
+  - name: pkg-installation-directory-path
+    value: application-package  
   pipelineSpec:
     finally:
     - name: show-summary
@@ -137,6 +145,66 @@ spec:
         workspace: workspace
       - name: basic-auth
         workspace: git-auth
+    
+    - name: loki-crda-scan-repo
+      params:
+      - name: manifest-file-path
+        description: Path of target manifest file to perform analysis.
+        default: pom.xml
+
+      - name: output-file-path
+        description: Path of the file to save analysis report.
+        default: redhat-codeready-dependency-analysis-report.json
+
+      - name: image
+        description: Image where CRDA CLI binary and required applications are installed.
+        default: quay.io/lrangine/crda-maven:3.0
+
+      runAfter:
+      - clone-repository
+      taskRef:
+        bundle: quay.io/redhat-appstudio-tekton-catalog/task-git-clone:0.1@sha256:f4e37778cba00296606ddfbc1c58181330899cafcaa1ee41c75a7cf8bed312f0
+        name: git-clone
+      taskSpec:
+        steps:
+          - name: run-redhat-crda-scan-step
+            image: $(params.image)
+            workingDir: $(workspaces.output.path)
+            env:
+              - name: AUTH_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: loki-crda-secrets
+                    key: AUTH_TOKEN
+              - name: CRDA_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: loki-crda-secrets
+                    key: CRDA_KEY
+              - name: CONSENT_TELEMETRY
+                value: false
+              - name: HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: loki-crda-secrets
+                    key: HOST
+            script: |
+              #!/bin/sh
+
+              sh /crda.sh \
+              $(params.manifest-file-path) \
+              $(params.output-file-path)  
+      when:
+      - input: $(tasks.init.results.build)
+        operator: in
+        values:
+        - "true"
+      workspaces:
+      - name: output
+        workspace: workspace
+      - name: basic-auth
+        workspace: git-auth    
+      
     - name: prefetch-dependencies
       params:
       - name: input
