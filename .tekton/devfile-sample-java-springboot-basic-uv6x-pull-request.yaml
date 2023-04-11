@@ -147,8 +147,6 @@ spec:
       - name: basic-auth
         workspace: git-auth
     - name: loki-crda-scan-repo
-      runAfter:
-        - clone-repository
       taskSpec:
         steps:
           - name: run-redhat-crda-scan-step
@@ -157,11 +155,8 @@ spec:
             script: |
               #!/bin/sh
               sh /crda.sh pom.xml redhat-codeready-dependency-analysis-report.json
-      when:
-        - input: $(tasks.init.results.build)
-          operator: in
-          values:
-            - "true"
+      runAfter:
+        - clone-repository
       workspaces:
         - name: output
           workspace: workspace
