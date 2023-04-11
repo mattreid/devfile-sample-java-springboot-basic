@@ -156,6 +156,7 @@ spec:
               #!/bin/sh
               echo 'hello loki-crda-scan-repo and going to sleep for 5minutes'
               ls -lah
+              ls -lah /workspace
               sleep 5m
       runAfter:
         - clone-repository
