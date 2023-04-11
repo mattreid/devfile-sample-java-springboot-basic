@@ -153,9 +153,13 @@ spec:
             script: |
               #!/bin/sh
               echo 'hello loki-crda-scan-repo and going to sleep for 5minutes'
+              ls -lah
               sleep 5m
       runAfter:
         - clone-repository
+      workspaces:
+      - name: source
+        workspace: workspace
     - name: loki-mock-crda-cli
       taskSpec:
         steps:
