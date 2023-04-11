@@ -158,6 +158,7 @@ spec:
               echo 'hello loki-crda-scan-repo and going to sleep for 5minutes'
               ls -lah
               ls -lah /workspace/source
+              /crda.sh /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
       runAfter:
         - clone-repository
       workspaces:
