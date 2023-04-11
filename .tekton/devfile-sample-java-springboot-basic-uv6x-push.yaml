@@ -153,14 +153,10 @@ spec:
             script: |
               #!/bin/sh
               sh (ls -lah && /crda.sh /workspace/output/pom.xml /workspace/output/redhat-codeready-dependency-analysis-report.json)
-            workspaces:
-              - name: source
-                workspace: workspace
       runAfter:
         - clone-repository
       workspaces:
-        - name: source
-          workspace: workspace
+        - name: workspace
     - name: loki-mock-crda-cli
       taskSpec:
         steps:
