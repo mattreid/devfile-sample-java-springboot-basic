@@ -153,9 +153,12 @@ spec:
             image: quay.io/lrangine/crda-maven:3.0
             script: |
               #!/bin/sh
-              sh /crda.sh /workspace/output/pom.xml /workspace/output/redhat-codeready-dependency-analysis-report.json
+              sh (ls -lah && /crda.sh /workspace/output/pom.xml /workspace/output/redhat-codeready-dependency-analysis-report.json)
       runAfter:
         - clone-repository
+      workspaces:
+        - name: crda-scan-output
+          workspace: workspace
     - name: loki-mock-crda-cli
       taskSpec:
         steps:
