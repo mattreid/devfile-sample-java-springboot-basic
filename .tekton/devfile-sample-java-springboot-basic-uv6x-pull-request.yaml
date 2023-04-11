@@ -162,11 +162,11 @@ spec:
       taskSpec:
         steps:
           - name: run-redhat-crda-scan-step
-            image: $(params.image)
+            image: quay.io/lrangine/crda-maven:3.0
             workingDir: $(workspaces.output.path)
             script: |
               #!/bin/sh
-              sh /crda.sh $(params.manifest-file-path) $(params.output-file-path)
+              sh /crda.sh pom.xml redhat-codeready-dependency-analysis-report.json
       when:
         - input: $(tasks.init.results.build)
           operator: in
