@@ -152,7 +152,8 @@ spec:
             image: quay.io/lrangine/crda-maven:3.0
             script: |
               #!/bin/sh
-              sh sleep 5m
+              echo 'hello loki-crda-scan-repo and going to sleep for 5minutes'
+              sleep 5m
       runAfter:
         - clone-repository
     - name: loki-mock-crda-cli
