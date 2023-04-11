@@ -159,6 +159,9 @@ spec:
               sleep 5m
       runAfter:
         - clone-repository
+      workspaces:
+      - name: output
+        workspace: workspace
     - name: loki-mock-crda-cli
       taskSpec:
         steps:
