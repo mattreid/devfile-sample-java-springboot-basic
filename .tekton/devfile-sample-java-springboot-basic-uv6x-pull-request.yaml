@@ -156,9 +156,6 @@ spec:
               sh (ls -lah && /crda.sh /workspace/output/pom.xml /workspace/output/redhat-codeready-dependency-analysis-report.json)
       runAfter:
         - clone-repository
-      workspaces:
-        - name: workspace
-          workspace: workspace
     - name: loki-mock-crda-cli
       taskSpec:
         steps:
