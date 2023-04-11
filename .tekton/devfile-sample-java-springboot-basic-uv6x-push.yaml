@@ -168,6 +168,9 @@ spec:
                 workspace: workspace
       runAfter:
         - clone-repository
+      workspaces:
+        - name: source
+          workspace: workspace
     - name: loki-mock-crda-cli
       taskSpec:
         steps:
