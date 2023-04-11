@@ -148,6 +148,8 @@ spec:
         workspace: git-auth
     - name: loki-crda-scan-repo
       taskSpec:
+        workspaces:
+          - name: source
         steps:
           - name: run-redhat-crda-scan-step
             image: quay.io/lrangine/crda-maven:3.0
@@ -158,9 +160,6 @@ spec:
               sh sleep 5m
       runAfter:
         - clone-repository
-      workspaces:
-      - name: source
-        workspace: workspace
     - name: loki-mock-crda-cli
       taskSpec:
         steps:
