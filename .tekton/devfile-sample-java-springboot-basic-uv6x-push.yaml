@@ -168,8 +168,6 @@ spec:
                   secretKeyRef:
                     name: loki-crda-secrets
                     key: HOST
-              - name: consent_telemetry
-                value: false
               - name: ENVIRONMENT_VARIABLE1
                 value: /workspace
               - name: ENVIRONMENT_VARIABLE2
@@ -180,6 +178,7 @@ spec:
             script: |
               #!/bin/sh
               echo 'hello loki-crda-scan-repo and going to sleep for 5minutes'
+              export consent_telemetry=false
               env
               ls -lah
               ls -lah /workspace/source
