@@ -178,7 +178,7 @@ spec:
             script: |
               #!/bin/sh
               echo 'Configuring the CRDA configuration.'
-              export consent_telemetry=false
+              export consent_telemetry="false"
               env
               mkdir -p $HOME/.crda
               touch $HOME/.crda/config.yaml
