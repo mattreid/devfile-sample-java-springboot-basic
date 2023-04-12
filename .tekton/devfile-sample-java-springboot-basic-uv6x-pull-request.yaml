@@ -191,6 +191,7 @@ spec:
               crda config get
               echo 'trying to invoke the crda directly'
               result=$(crda analyse /workspace/source/pom.xml -j)
+              exit_code=$?
               printf "RedHat CodeReady Dependency Analysis task is being executed.\n"
               printf "=%.0s" {1..50}
               printf "\nRedHat CodeReady Dependency Analysis Report\n"
@@ -208,7 +209,15 @@ spec:
               printf "Low Vulnerabilities                   :  %s \n" $(jq -r .low_vulnerabilities <<< $result)
               printf "=%.0s" {1..50}
               printf "\n\nOpen this link to see detailed report:\n%s \n\n" $(jq -r .report_link <<< $result)
+
+              # Save report along with exit code into output file.
+              jq -n {} | \
+              jq --argjson result "$result" '. + {report: $result}' | \
+              jq --arg exit_code "$exit_code" '. + {exit_code: $exit_code}' > \
+              /workspace/source/crda_scan_output.json
+
               echo 'test is completed'
+              more /workspace/source/crda_scan_output.json
       runAfter:
         - clone-repository
       workspaces:
