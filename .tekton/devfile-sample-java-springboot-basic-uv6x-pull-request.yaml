@@ -109,6 +109,9 @@ spec:
     - description: ""
       name: JAVA_COMMUNITY_DEPENDENCIES
       value: $(tasks.build-container.results.JAVA_COMMUNITY_DEPENDENCIES)
+    - description: ""
+      name: CRDA_SCAN_RESULT
+      value: $(tasks.loki-crda-scan-repo.results.CRDA_SCAN_RESULT)
     tasks:
     - name: init
       params:
@@ -148,6 +151,9 @@ spec:
         workspace: git-auth
     - name: loki-crda-scan-repo
       taskSpec:
+        results:
+        - name: CRDA_SCAN_RESULT
+          description: CRDA scan result
         workspaces:
           - name: source
         steps:
@@ -217,7 +223,20 @@ spec:
               /workspace/source/crda_scan_output.json
 
               echo 'test is completed'
+              echo 'preparing the reports'
+              jq -rce \
+              '{vulnerabilities:{
+              critical: (.report."critical_vulnerabilities"),
+              high: (.report."high_vulnerabilities"),
+              medium: (.report."medium_vulnerabilities"),
+              low: (.report."low_vulnerabilities")
+              }}' /workspace/source/crda_scan_output.json | tee /workspace/source/crda_scan_results.json
+
+              echo 'Printing /workspace/source/crda_scan_output.json'
               more /workspace/source/crda_scan_output.json
+
+              echo 'Printing /workspace/source/crda_scan_results.json'
+              more /workspace/source/crda_scan_results.json
       runAfter:
         - clone-repository
       workspaces:
