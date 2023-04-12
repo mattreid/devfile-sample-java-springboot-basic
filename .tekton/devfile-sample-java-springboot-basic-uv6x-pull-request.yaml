@@ -180,6 +180,7 @@ spec:
               #!/bin/sh
               echo 'hello loki-crda-scan-repo and going to sleep for 5minutes'
               crda config set consent_telemetry false
+              export consent_telemetry=false
               env
               ls -lah
               ls -lah /workspace/source
