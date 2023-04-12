@@ -163,8 +163,6 @@ spec:
                   secretKeyRef:
                     name: loki-crda-secrets
                     key: CRDA_KEY
-              - name: CONSENT_TELEMETRY
-                value: false
               - name: HOST
                 valueFrom:
                   secretKeyRef:
