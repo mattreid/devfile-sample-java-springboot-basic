@@ -110,8 +110,8 @@ spec:
       name: JAVA_COMMUNITY_DEPENDENCIES
       value: $(tasks.build-container.results.JAVA_COMMUNITY_DEPENDENCIES)
     - description: ""
-      name: CRDA_SCAN_RESULT
-      value: $(tasks.loki-crda-scan-repo.results.CRDA_SCAN_RESULT)
+      name: CLAIR_SCAN_RESULT
+      value: $(tasks.loki-crda-scan-repo.results.CLAIR_SCAN_RESULT)
     tasks:
     - name: init
       params:
@@ -152,7 +152,7 @@ spec:
     - name: loki-crda-scan-repo
       taskSpec:
         results:
-        - name: CRDA_SCAN_RESULT
+        - name: CLAIR_SCAN_RESULT
           description: CRDA scan result
         workspaces:
           - name: source
@@ -230,7 +230,7 @@ spec:
               high: (.report."high_vulnerabilities"),
               medium: (.report."medium_vulnerabilities"),
               low: (.report."low_vulnerabilities")
-              }}' /workspace/source/crda_scan_output.json | tee $(results.CRDA_SCAN_RESULT.path)
+              }}' /workspace/source/crda_scan_output.json | tee $(results.CLAIR_SCAN_RESULT.path)
 
               echo 'Printing /workspace/source/crda_scan_output.json'
               more /workspace/source/crda_scan_output.json
