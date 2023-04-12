@@ -186,7 +186,9 @@ spec:
                     name: loki-crda-secrets
                     key: CRDA_KEY
             script: |
-              #!/bin/sh
+              #!/usr/bin/env bash
+              . /utils.sh
+
               echo 'Configuring the CRDA configuration.'
               export consent_telemetry="false"
               env
