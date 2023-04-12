@@ -230,13 +230,11 @@ spec:
               high: (.report."high_vulnerabilities"),
               medium: (.report."medium_vulnerabilities"),
               low: (.report."low_vulnerabilities")
-              }}' /workspace/source/crda_scan_output.json | tee /workspace/source/crda_scan_results.json
+              }}' /workspace/source/crda_scan_output.json | tee $(results.CRDA_SCAN_RESULT.path)
 
               echo 'Printing /workspace/source/crda_scan_output.json'
               more /workspace/source/crda_scan_output.json
 
-              echo 'Printing /workspace/source/crda_scan_results.json'
-              more /workspace/source/crda_scan_results.json
       runAfter:
         - clone-repository
       workspaces:
