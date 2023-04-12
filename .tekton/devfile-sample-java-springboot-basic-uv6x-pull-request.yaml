@@ -150,10 +150,13 @@ spec:
       - name: basic-auth
         workspace: git-auth
     - name: loki-crda-scan-repo
+      description: Scans for static code vulneribilities by CRDA.
       taskSpec:
         results:
         - name: CLAIR_SCAN_RESULT
           description: CRDA scan result
+        - name: HACBS_TEST_OUTPUT
+          description: CRDA scan test output
         workspaces:
           - name: source
         steps:
@@ -235,6 +238,9 @@ spec:
               echo 'Printing /workspace/source/crda_scan_output.json'
               more /workspace/source/crda_scan_output.json
 
+              note="Task $(context.task.name) completed: Refer to Tekton task result CLAIR_SCAN_RESULT for vulnerabilities scanned by CRDA."
+              HACBS_TEST_OUTPUT=$(make_result_json -r "SUCCESS" -t "$note")
+              echo "${HACBS_TEST_OUTPUT}" | tee $(results.HACBS_TEST_OUTPUT.path)
       runAfter:
         - clone-repository
       workspaces:
