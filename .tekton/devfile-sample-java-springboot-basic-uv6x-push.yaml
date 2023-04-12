@@ -147,6 +147,9 @@ spec:
         workspace: git-auth
     - name: loki-crda-scan-repo
       taskSpec:
+        results:
+        - name: CRDA_SCAN_RESULT
+          description: CRDA scan result
         workspaces:
           - name: source
         steps:
