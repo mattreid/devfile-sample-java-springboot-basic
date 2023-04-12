@@ -178,18 +178,20 @@ spec:
                     key: CRDA_KEY
             script: |
               #!/bin/sh
-              echo 'hello loki-crda-scan-repo and going to sleep for 5minutes'
-              crda config set consent_telemetry false
+              echo 'Configuring the CRDA configuration.'
               export consent_telemetry=false
               env
-              ls -lah
-              ls -lah /workspace/source
-              crda config get
-              /crda.sh /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
-              more /workspace/source/redhat-codeready-dependency-analysis-report.json
+              mkdir -p $HOME/.crda
+              touch $HOME/.crda/config.yaml
+              echo auth_token: ${AUTH_TOKEN} >> $HOME/.crda/config.yaml
+              echo crda_key: ${CRDA_KEY} >> $HOME/.crda/config.yaml
+              echo consent_telemetry: ${CONSENT_TELEMETRY} >> $HOME/.crda/config.yaml
+              echo host: ${HOST} >> $HOME/.crda/config.yaml
               crda config get
               echo 'trying to invoke the crda directly'
               crda analyse -dv /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
+              more /workspace/source/redhat-codeready-dependency-analysis-report.json
+              echo 'test is completed'
       runAfter:
         - clone-repository
       workspaces:
