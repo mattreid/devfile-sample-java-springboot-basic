@@ -182,7 +182,7 @@ spec:
               env
               ls -lah
               ls -lah /workspace/source
-              /crda.sh -d -v /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
+              /crda.sh /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
       runAfter:
         - clone-repository
       workspaces:
