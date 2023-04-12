@@ -147,14 +147,6 @@ spec:
       - name: basic-auth
         workspace: git-auth
     - name: loki-crda-scan-repo
-      params:
-        - name: crda-scan-image
-          description: docker image to scan the CRDA CLI.
-      results:
-        - name: HACBS_TEST_OUTPUT
-          description: Tekton task test output.
-        - name: CRDA_SCAN_RESULT
-          description: CRDA scan result.
       taskSpec:
         workspaces:
           - name: source
