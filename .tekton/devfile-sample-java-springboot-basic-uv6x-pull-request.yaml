@@ -182,7 +182,11 @@ spec:
               env
               ls -lah
               ls -lah /workspace/source
+              crda config get
               /crda.sh /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
+              crda config get
+              echo 'trying to invoke the crda directly'
+              crda analyse -dv /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
       runAfter:
         - clone-repository
       workspaces:
