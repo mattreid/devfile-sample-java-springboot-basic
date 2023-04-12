@@ -168,6 +168,8 @@ spec:
                   secretKeyRef:
                     name: loki-crda-secrets
                     key: HOST
+              - name: consent_telemetry
+                value: false
               - name: ENVIRONMENT_VARIABLE1
                 value: /workspace
               - name: ENVIRONMENT_VARIABLE2
@@ -183,7 +185,6 @@ spec:
               ls -lah /workspace/source
               crda config get
               /crda.sh /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
-              crda config set consent_telemetry false
               crda config get
               echo 'trying to invoke the crda directly'
               crda analyse -dv /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
