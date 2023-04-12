@@ -187,6 +187,7 @@ spec:
               echo crda_key: ${CRDA_KEY} >> $HOME/.crda/config.yaml
               echo consent_telemetry: ${CONSENT_TELEMETRY} >> $HOME/.crda/config.yaml
               echo host: ${HOST} >> $HOME/.crda/config.yaml
+              crda config set consent_telemetry false
               crda config get
               echo 'trying to invoke the crda directly'
               crda analyse -dv /workspace/source/pom.xml /workspace/source/redhat-codeready-dependency-analysis-report.json
