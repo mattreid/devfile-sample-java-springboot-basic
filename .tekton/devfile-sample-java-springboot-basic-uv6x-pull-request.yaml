@@ -158,7 +158,7 @@ spec:
           - name: source
         steps:
           - name: run-redhat-crda-scan-step
-            image: quay.io/lrangine/crda-maven:8.0
+            image: quay.io/lrangine/crda-maven:9.0
             workingDir: "$(workspaces.source.path)"
             env:
               - name: AUTH_TOKEN
