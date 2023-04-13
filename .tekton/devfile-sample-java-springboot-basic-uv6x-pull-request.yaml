@@ -161,7 +161,7 @@ spec:
           - name: source
         steps:
           - name: run-redhat-crda-scan-step
-            image: quay.io/lrangine/crda-maven:3.0
+            image: quay.io/lrangine/crda-maven:4.0
             env:
               - name: AUTH_TOKEN
                 valueFrom:
@@ -178,18 +178,12 @@ spec:
                   secretKeyRef:
                     name: loki-crda-secrets
                     key: HOST
-              - name: ENVIRONMENT_VARIABLE1
-                value: /workspace
-              - name: ENVIRONMENT_VARIABLE2
-                valueFrom:
-                  secretKeyRef:
-                    name: loki-crda-secrets
-                    key: CRDA_KEY
             script: |
               #!/usr/bin/env bash
               echo 'Configuring the CRDA configuration.'
               env
-              crda config set consent_telemetry false
+              pwd
+              ls -lah
               echo 'before executing the crda.sh'
               crda config get
               /crda.sh pom.xml crda_scan_output.json
@@ -198,7 +192,6 @@ spec:
               echo 'test is completed'
               echo 'Printing /workspace/source/crda_scan_output.json'
               more /workspace/source/crda_scan_output.json
-
               echo 'preparing the reports'
               jq -rce \
               '{vulnerabilities:{
