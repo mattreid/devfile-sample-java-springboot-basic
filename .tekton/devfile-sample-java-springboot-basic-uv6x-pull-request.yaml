@@ -109,9 +109,6 @@ spec:
     - description: ""
       name: JAVA_COMMUNITY_DEPENDENCIES
       value: $(tasks.build-container.results.JAVA_COMMUNITY_DEPENDENCIES)
-    - description: ""
-      name: CLAIR_SCAN_RESULT
-      value: $(tasks.loki-crda-scan-repo.results.CLAIR_SCAN_RESULT)
     tasks:
     - name: init
       params:
@@ -149,8 +146,8 @@ spec:
         workspace: workspace
       - name: basic-auth
         workspace: git-auth
-    - name: loki-crda-scan-repo
-      description: Scans for static code vulneribilities by CRDA.
+    - name: crda-scan
+      description: CRDA tool Scans for static code vulneribilities.
       taskSpec:
         results:
         - name: CLAIR_SCAN_RESULT
@@ -161,39 +158,31 @@ spec:
           - name: source
         steps:
           - name: run-redhat-crda-scan-step
-            image: quay.io/lrangine/crda-maven:6.0
+            image: quay.io/lrangine/crda-maven:7.0
             workingDir: "$(workspaces.source.path)"
             env:
               - name: AUTH_TOKEN
                 valueFrom:
                   secretKeyRef:
-                    name: loki-crda-secrets
+                    name: crda-scan-secrets
                     key: AUTH_TOKEN
               - name: CRDA_KEY
                 valueFrom:
                   secretKeyRef:
-                    name: loki-crda-secrets
+                    name: crda-scan-secrets
                     key: CRDA_KEY
               - name: HOST
                 valueFrom:
                   secretKeyRef:
-                    name: loki-crda-secrets
+                    name: crda-scan-secrets
                     key: HOST
             script: |
               #!/usr/bin/env bash
-              echo 'Configuring the CRDA configuration.'
-              env
-              pwd
-              ls -lah
-              echo 'before executing the crda.sh'
-              crda config get
               /crda.sh pom.xml crda_scan_output.json
-              echo 'after executing the crda.sh'
-              crda config get
-              echo 'test is completed'
-              echo 'Printing /workspace/source/crda_scan_output.json'
-              more /workspace/source/crda_scan_output.json
-              echo 'preparing the reports'
+              echo 'CRDA Scan is completed'
+              echo 'Printing scan results'
+              more crda_scan_output.json
+              echo 'Formatting the Task Results'
               jq -rce \
               '{vulnerabilities:{
               critical: (.report."critical_vulnerabilities"),
@@ -202,8 +191,8 @@ spec:
               low: (.report."low_vulnerabilities")
               }}' crda_scan_output.json | tee $(results.CLAIR_SCAN_RESULT.path)
 
-              note="Task $(context.task.name) completed: Refer to Tekton task result CLAIR_SCAN_RESULT for vulnerabilities scanned by CRDA."
-              HACBS_TEST_OUTPUT=`SUCCESS $note`
+              NOTE="Task $(context.task.name) completed: Refer to Tekton task result CLAIR_SCAN_RESULT for vulnerabilities scanned by CRDA."
+              HACBS_TEST_OUTPUT="SUCCESS $NOTE"
               echo "${HACBS_TEST_OUTPUT}" | tee $(results.HACBS_TEST_OUTPUT.path)
       runAfter:
         - clone-repository
