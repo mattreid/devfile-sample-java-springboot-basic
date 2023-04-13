@@ -187,47 +187,18 @@ spec:
                     key: CRDA_KEY
             script: |
               #!/usr/bin/env bash
-              . /utils.sh
-
               echo 'Configuring the CRDA configuration.'
-              export consent_telemetry="false"
               env
-              mkdir -p $HOME/.crda
-              touch $HOME/.crda/config.yaml
-              echo auth_token: ${AUTH_TOKEN} >> $HOME/.crda/config.yaml
-              echo crda_key: ${CRDA_KEY} >> $HOME/.crda/config.yaml
-              echo consent_telemetry: ${CONSENT_TELEMETRY} >> $HOME/.crda/config.yaml
-              echo host: ${HOST} >> $HOME/.crda/config.yaml
               crda config set consent_telemetry false
+              echo 'before executing the crda.sh'
               crda config get
-              echo 'trying to invoke the crda directly'
-              result=$(crda analyse /workspace/source/pom.xml -j)
-              exit_code=$?
-              printf "RedHat CodeReady Dependency Analysis task is being executed.\n"
-              printf "=%.0s" {1..50}
-              printf "\nRedHat CodeReady Dependency Analysis Report\n"
-              printf "=%.0s" {1..50}
-              printf "\n"
-              printf "Total Scanned Dependencies            :  %s \n" $(jq -r .total_scanned_dependencies <<< $result)
-              printf "Total Scanned Transitive Dependencies :  %s \n" $(jq -r .total_scanned_transitives <<< $result)
-              printf "Total Vulnerabilities                 :  %s \n" $(jq -r .total_vulnerabilities <<< $result)
-              printf "Direct Vulnerable Dependencies        :  %s \n" $(jq -r .direct_vulnerable_dependencies <<< $result)
-              printf "Publicly Available Vulnerabilities    :  %s \n" $(jq -r .publicly_available_vulnerabilities <<< $result)
-              printf "Vulnerabilities Unique to Snyk        :  %s \n" $(jq -r .vulnerabilities_unique_to_synk <<< $result)
-              printf "Critical Vulnerabilities              :  %s \n" $(jq -r .critical_vulnerabilities <<< $result)
-              printf "High Vulnerabilities                  :  %s \n" $(jq -r .high_vulnerabilities <<< $result)
-              printf "Medium Vulnerabilities                :  %s \n" $(jq -r .medium_vulnerabilities <<< $result)
-              printf "Low Vulnerabilities                   :  %s \n" $(jq -r .low_vulnerabilities <<< $result)
-              printf "=%.0s" {1..50}
-              printf "\n\nOpen this link to see detailed report:\n%s \n\n" $(jq -r .report_link <<< $result)
-
-              # Save report along with exit code into output file.
-              jq -n {} | \
-              jq --argjson result "$result" '. + {report: $result}' | \
-              jq --arg exit_code "$exit_code" '. + {exit_code: $exit_code}' > \
-              /workspace/source/crda_scan_output.json
-
+              /crda.sh pom.xml crda_scan_output.json
+              echo 'after executing the crda.sh'
+              crda config get
               echo 'test is completed'
+              echo 'Printing /workspace/source/crda_scan_output.json'
+              more /workspace/source/crda_scan_output.json
+
               echo 'preparing the reports'
               jq -rce \
               '{vulnerabilities:{
@@ -235,13 +206,10 @@ spec:
               high: (.report."high_vulnerabilities"),
               medium: (.report."medium_vulnerabilities"),
               low: (.report."low_vulnerabilities")
-              }}' /workspace/source/crda_scan_output.json | tee $(results.CLAIR_SCAN_RESULT.path)
-
-              echo 'Printing /workspace/source/crda_scan_output.json'
-              more /workspace/source/crda_scan_output.json
+              }}' crda_scan_output.json | tee $(results.CLAIR_SCAN_RESULT.path)
 
               note="Task $(context.task.name) completed: Refer to Tekton task result CLAIR_SCAN_RESULT for vulnerabilities scanned by CRDA."
-              HACBS_TEST_OUTPUT=$(make_result_json -r "SUCCESS" -t "$note")
+              HACBS_TEST_OUTPUT=`SUCCESS $note`
               echo "${HACBS_TEST_OUTPUT}" | tee $(results.HACBS_TEST_OUTPUT.path)
       runAfter:
         - clone-repository
